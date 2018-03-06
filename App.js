@@ -69,10 +69,9 @@ export default class App extends React.Component {
     // manipulate state
     this.setState({
       locationName: response.location,
+      currentIcon: icon(response.weather.currently.icon),
       currentTemperature: Math.round(response.weather.currently.temperature),
-      currentSummary: response.weather.currently.summary,
-      currentIcon: response.weather.currently.icon,
-      forecast: response.weather.daily.data.splice(0,6)
+      forecast: response.weather.daily.data
     });
   }
 
@@ -82,17 +81,21 @@ export default class App extends React.Component {
     // 2. Current weather conditions (styles provided with currentIcon, locationText,
     //    currentTemperature, currentSummary)
     // 3. Forecast (forecastDay, forecastIcon, forecastTemperature)
-    let forecast = [
-      for (let i=0; i<this.state.foreceast.length; i++) {
+    let forecast = []; // this will eventually hold the JSX elements for each day
+
+    // loop through the forecast object in state and create JSX for the forecast
+    if (this.state.forecast.length > 0) {
+      for (let i=0; i<5; i++) {
         forecast.push(
-          <View style={styles.forecastday} key={i}>
-          <Text style ={styles.forecastIcon}>
-          <Icon size ={30} name={icon(this.state.forecast[i].icon)}/></Text>
-          <Text style={styles.forecastTemperature}>{Math.round(this.state.forecast[i].temperatureHigh)}</Text>
+          <View style={styles.forecastDay} key={i}>
+            <Text style={styles.forecastIcon}>
+              <Icon size={30} name={icon(this.state.forecast[i].icon)} />
+            </Text>
+            <Text style={styles.forecastTemperature}>{Math.round(this.state.forecast[i].temperatureHigh)}</Text>
           </View>
         )
       }
-    ]; // this will eventually hold the JSX elements for each day
+    }
 
     return (
       <View style={styles.container}>
@@ -102,7 +105,12 @@ export default class App extends React.Component {
         </View>
         <View style={styles.currentWeather}>
           {/* Current weather conditions */}
+          <Text style={styles.currentIcon}>
+            {this.state.currentIcon && <Icon name={this.state.currentIcon} size={100} color="#000" />}
+          </Text>
           <Text style={styles.locationText}>{this.state.locationName}</Text>
+          <Text style={styles.currentTemperature}>{this.state.currentTemperature}</Text>
+          <Text style={styles.currentSummary}>{this.state.currentSummary}</Text>
         </View>
         <View style={styles.forecast}>
           {forecast}
